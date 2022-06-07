@@ -144,14 +144,14 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
     private fun resumeRecording() {
         recorder.resume()
         isPause = false
-        btn_Record.background = ResourcesCompat.getDrawable(resources, R.drawable.ic_round_pause_circle_24, theme)
+        btn_Record.background = ResourcesCompat.getDrawable(resources, R.drawable.record_btn_stopped, theme)
         timer.start()
     }
 
     private fun pauseRecording() {
         recorder.pause()
         isPause = true
-        btn_Record.background = ResourcesCompat.getDrawable(resources, R.drawable.ic_round_play_circle_24, theme)
+        btn_Record.background = ResourcesCompat.getDrawable(resources, R.drawable.record_btn_recording, theme)
         timer.pause()
     }
 
@@ -184,14 +184,14 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
             start()
         }
 
-        btn_Record.background = ResourcesCompat.getDrawable(resources, R.drawable.ic_round_pause_circle_24, theme)
+        btn_Record.background = ResourcesCompat.getDrawable(resources, R.drawable.record_btn_stopped, theme)
         isRecording = true
         isPause = false
 
         timer.start()
 
         btn_Delete.isClickable = true
-        btn_Delete.setImageResource(R.drawable.ic_round_clear_24_delete_disabled)
+        btn_Delete.setImageResource(R.drawable.ic_round_close_24)
         btn_Delete.visibility = View.VISIBLE
 
         btn_Done.visibility = View.VISIBLE
@@ -213,7 +213,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         btn_Delete.isClickable = false
         btn_Delete.visibility = View.GONE
 
-        btn_Record.background = ResourcesCompat.getDrawable(resources, R.drawable.ic_round_play_circle_24, theme)
+        btn_Record.background = ResourcesCompat.getDrawable(resources, R.drawable.record_btn_recording, theme)
 
         tv_Timer.text = "00:00.00"
     }

@@ -56,7 +56,7 @@
                 android:layout_width="@dimen/btn_size"
                 android:layout_height="@dimen/btn_size"
                 android:background="@drawable/ic_ripple"
-                android:src="@drawable/ic_round_clear_24_delete_disabled"
+                android:src="@drawable/ic_round_close_24"
                 android:visibility="gone" />
 
             <ImageButton
@@ -65,7 +65,7 @@
                 android:layout_height="66dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
-                android:background="@drawable/ic_round_play_circle_24" />
+                android:background="@drawable/record_btn_recording" />
 
             <ImageButton
                 android:id="@+id/btn_Done"
