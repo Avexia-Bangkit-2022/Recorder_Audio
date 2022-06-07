@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.view.View
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
@@ -23,7 +25,6 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var handler: Handler
     private var delay = 1000L
     private var jumpValue = 1000
-    private var playBackSpeed = 1.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +32,10 @@ class PlayerActivity : AppCompatActivity() {
 
         var filePath = intent.getStringExtra("filepath")
         var fileName = intent.getStringExtra("filename")
+        val file = fileName+filePath
+        Log.d("player", file.toString())
+
+        showLoading(true)
 
         mediaPlayer = MediaPlayer()
         mediaPlayer.apply {
@@ -45,7 +50,6 @@ class PlayerActivity : AppCompatActivity() {
         var btnPlay = findViewById<ImageButton>(R.id.btnPlay)
         var btnForward = findViewById<ImageButton>(R.id.btnForward)
         var btnBackward = findViewById<ImageButton>(R.id.btnBackward)
-        var speedChip = findViewById<Chip>(R.id.speedChip)
         var seekBar = findViewById<SeekBar>(R.id.seekBar)
 
         setSupportActionBar(materialToolbar)
@@ -54,6 +58,7 @@ class PlayerActivity : AppCompatActivity() {
         materialToolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+
         tvFileName.text = fileName
         tvTrackDuration.text = dateFormat(mediaPlayer.duration)
 
@@ -83,14 +88,6 @@ class PlayerActivity : AppCompatActivity() {
             mediaPlayer.seekTo(mediaPlayer.currentPosition - jumpValue)
             seekBar.progress -= jumpValue
             seekBar.progress = seekBar.progress - jumpValue
-        }
-
-        speedChip.setOnCloseIconClickListener {
-            if (playBackSpeed != 2f){ playBackSpeed += 0.5f }
-            else{ playBackSpeed = 0.5f }
-
-            mediaPlayer.playbackParams = PlaybackParams().setSpeed(playBackSpeed)
-            speedChip.text = "x $playBackSpeed"
         }
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
@@ -137,5 +134,10 @@ class PlayerActivity : AppCompatActivity() {
         if (h > 0)
             str = "$h:$str"
         return str
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) { progressBar_Player.visibility = View.VISIBLE }
+        else{ progressBar_Player.visibility = View.GONE }
     }
 }

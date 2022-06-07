@@ -2,9 +2,9 @@
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="?rippleColor">
     <item>
-        <shape android:shape="oval">
-            <solid android:color="@color/orange"/>
-        </shape>
+        <bitmap android:src="@drawable/avexia">
+        </bitmap>
+        <shape android:shape="oval"/>
     </item>
 
 </ripple>

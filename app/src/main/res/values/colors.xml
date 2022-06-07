@@ -15,4 +15,5 @@
     <color name="colorStatus">#EDEDED</color>
     <color name="colorStroke">#1E88E5</color>
     <color name="opaqueBG">#61000000</color>
+    <color name="maroon">#800000</color>
 </resources>

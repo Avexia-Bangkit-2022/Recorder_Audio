@@ -16,6 +16,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
+import kotlinx.android.synthetic.main.progress_button.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         const val REQUEST_CODE = 200
     }
 
-    private var permission = arrayOf(Manifest.permission.RECORD_AUDIO)
+    private var permission = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private var permissionGranted = false
     private var dirPath = ""
     private var fileName = ""
@@ -70,24 +71,29 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
             fileName_Input.setText(fileName)
         }
 
-        btn_Cancel.setOnClickListener {
-            File("$dirPath$fileName.wav").delete()
+        imageButton_Cancel.setOnClickListener {
+            File("$dirPath$fileName.mp3").delete()
             dismis()
         }
 
-        btn_Ok.setOnClickListener {
+        /*btn_Ok.setOnClickListener {
+            dismis()
+            save()
+        }*/
+
+        btn_cardView_fetch.setOnClickListener {
             dismis()
             save()
         }
 
         bottomSheetBG.setOnClickListener {
-            File("$dirPath$fileName.wav").delete()
+            File("$dirPath$fileName.mp3").delete()
             dismis()
         }
 
         btn_Delete.setOnClickListener {
             stopRecording()
-            File("$dirPath$fileName.wav").delete()
+            File("$dirPath$fileName.mp3").delete()
             Toast.makeText(this, "Record delete", Toast.LENGTH_SHORT).show()
         }
 
@@ -97,17 +103,17 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
     private fun save() {
         val newFileName = fileName_Input.text.toString()
         if (newFileName != fileName){
-            var newFile = File("$dirPath$newFileName.wav")
-            File("$dirPath$fileName.wav").renameTo(newFile)
+            var newFile = File("$dirPath$newFileName.mp3")
+            File("$dirPath$fileName.mp3").renameTo(newFile)
         }
 
-        var filePath = "$dirPath$newFileName.wav"
+        var filePath = "$dirPath$newFileName.mp3"
         var timeStamp = Date().time
 
         Toast.makeText(this, "Record save", Toast.LENGTH_SHORT).show()
         val intent = Intent(this, PlayerActivity::class.java)
         intent.putExtra("filepath", filePath)
-        intent.putExtra("filename", fileName)
+        intent.putExtra("filename", newFileName)
         startActivity(intent)
 
     }
@@ -160,15 +166,16 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         }
 
         recorder = MediaRecorder()
-        dirPath = "${externalCacheDir?.absolutePath}"
         fileName = "audio_record_$date"
+        //dirPath = "{$externalCacheDir?.absolutePath}"
+        dirPath = externalCacheDir?.absolutePath.toString()
 
 
         recorder.apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile("$dirPath$fileName.wav")
+            setOutputFile("$dirPath$fileName.mp3")
 
             try {
                 prepare()
