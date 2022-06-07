@@ -59,7 +59,7 @@ class PlayerActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        tvFileName.text = fileName
+        tvFileName.text = "$fileName.mp3"
         tvTrackDuration.text = dateFormat(mediaPlayer.duration)
 
         handler = Handler(Looper.getMainLooper())
