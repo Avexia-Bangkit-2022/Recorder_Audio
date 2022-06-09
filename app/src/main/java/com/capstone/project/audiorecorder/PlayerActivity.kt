@@ -12,6 +12,8 @@ import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.ViewModelProvider
+import com.capstone.project.audiorecorder.viewmodel.ViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.activity_player.*
@@ -23,25 +25,13 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var runnable: Runnable
     private lateinit var handler: Handler
+    private lateinit var viewModel: ViewModel
     private var delay = 1000L
     private var jumpValue = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-
-        var filePath = intent.getStringExtra("filepath")
-        var fileName = intent.getStringExtra("filename")
-        val file = fileName+filePath
-        Log.d("player", file.toString())
-
-        showLoading(true)
-
-        mediaPlayer = MediaPlayer()
-        mediaPlayer.apply {
-            setDataSource(filePath)
-            prepare()
-        }
 
         var tvFileName = findViewById<TextView>(R.id.tvFileName)
         var tvTrackProgress = findViewById<TextView>(R.id.tvTrackProgress)
@@ -51,6 +41,32 @@ class PlayerActivity : AppCompatActivity() {
         var btnForward = findViewById<ImageButton>(R.id.btnForward)
         var btnBackward = findViewById<ImageButton>(R.id.btnBackward)
         var seekBar = findViewById<SeekBar>(R.id.seekBar)
+        //var tvDescPlayer = findViewById<TextView>(R.id.tvDescPlayer)
+
+        var filePath = intent.getStringExtra("filepath")
+        var fileName = intent.getStringExtra("filename")
+        //val predict = intent.getStringExtra("predict")
+        val file = fileName+filePath
+        Log.d("player", file.toString())
+
+        //tvDescPlayer.setText(predict)
+
+        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
+
+        /*if (fileName != null) { viewModel.setAudioPlayer(fileName) }
+        viewModel.getAudioPlayer().observe(this, {
+            showLoading(true)
+            if (it != null){
+                tvDescPlayer.text = it.message
+            }
+            showLoading(false)
+        })*/
+
+        mediaPlayer = MediaPlayer()
+        mediaPlayer.apply {
+            setDataSource(filePath)
+            prepare()
+        }
 
         setSupportActionBar(materialToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

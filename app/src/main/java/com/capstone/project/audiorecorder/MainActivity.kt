@@ -6,21 +6,37 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.*
-import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.ViewModelProvider
+import com.capstone.project.audiorecorder.api.ApiConfig
+import com.capstone.project.audiorecorder.response.PostResponse
+import com.capstone.project.audiorecorder.viewmodel.ViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_player.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import kotlinx.android.synthetic.main.progress_button.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
 
@@ -28,7 +44,9 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         const val REQUEST_CODE = 200
     }
 
-    private var permission = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private var permission = arrayOf(Manifest.permission.RECORD_AUDIO,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE)
     private var permissionGranted = false
     private var dirPath = ""
     private var fileName = ""
@@ -36,9 +54,11 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
     private var isPause = false
     private var duration = ""
 
+    private lateinit var waveFormView: WaveFormView
     private lateinit var recorder: MediaRecorder
     private lateinit var timer: Timer
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var viewModel: ViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +73,8 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         timer = Timer(this)
+
+        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
 
         btn_Record.setOnClickListener {
             when{
@@ -72,7 +94,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         }
 
         imageButton_Cancel.setOnClickListener {
-            File("$dirPath$fileName.mp3").delete()
+            File("$dirPath$fileName.wav").delete()
             dismis()
         }
 
@@ -87,13 +109,13 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         }
 
         bottomSheetBG.setOnClickListener {
-            File("$dirPath$fileName.mp3").delete()
+            File("$dirPath$fileName.wav").delete()
             dismis()
         }
 
         btn_Delete.setOnClickListener {
             stopRecording()
-            File("$dirPath$fileName.mp3").delete()
+            File("$dirPath$fileName.wav").delete()
             Toast.makeText(this, "Record delete", Toast.LENGTH_SHORT).show()
         }
 
@@ -103,18 +125,57 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
     private fun save() {
         val newFileName = fileName_Input.text.toString()
         if (newFileName != fileName){
-            var newFile = File("$dirPath$newFileName.mp3")
-            File("$dirPath$fileName.mp3").renameTo(newFile)
+            var newFile = File("$dirPath$newFileName.wav")
+            File("$dirPath$fileName.wav").renameTo(newFile)
         }
 
-        var filePath = "$dirPath$newFileName.mp3"
+        var filePath = "$dirPath$newFileName.wav"
         var timeStamp = Date().time
 
-        Toast.makeText(this, "Record save", Toast.LENGTH_SHORT).show()
+        //val file = File(filePath)
+        //val reqAudio = file.asRequestBody("mp3/wav".toMediaTypeOrNull())
+
+        //val reqFileUpload = RequestBody.create("mp3/wav", filePath)
+        val name = newFileName.toRequestBody("text/plain".toMediaType())
+        val file = File(filePath).asRequestBody("wav".toMediaTypeOrNull())
+        val fileToUpload: MultipartBody.Part = MultipartBody.Part.createFormData("name", name.toString(), file)
+        /*Log.d("Main", filePath)
+        Log.d("Main", newFileName)
+        Log.d("Main", fileName)*/
+
+        val retrofit = ApiConfig.getApiService().uploadAudio(fileToUpload)
+        retrofit.enqueue(object : Callback<PostResponse>{
+            override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
+                if (response.isSuccessful){
+                    val responseBody = response.body()
+                    if (responseBody != null){
+                        Toast.makeText(this@MainActivity, "Upload Succes", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@MainActivity, PlayerActivity::class.java)
+                        intent.putExtra("filepath", filePath)
+                        intent.putExtra("filename", newFileName)
+                        intent.putExtra("Predict", responseBody.prediction)
+                        startActivity(intent)
+                        Log.d("Main", file.toString())
+                        Log.d("Main", name.toString())
+                        Log.d("Main", fileToUpload.toString())
+                        Log.d("Main", responseBody.toString())
+                    }else{
+                        Toast.makeText(this@MainActivity, "Upload Failed : " + response.message(),
+                                    Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PostResponse>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Upload Failed : " + t.message, Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        /*Toast.makeText(this, "Record save", Toast.LENGTH_SHORT).show()
         val intent = Intent(this, PlayerActivity::class.java)
         intent.putExtra("filepath", filePath)
         intent.putExtra("filename", newFileName)
-        startActivity(intent)
+        startActivity(intent)*/
 
     }
 
@@ -175,7 +236,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile("$dirPath$fileName.mp3")
+            setOutputFile("$dirPath$fileName.wav")
 
             try {
                 prepare()
@@ -232,4 +293,5 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         this.duration = duration.dropLast(3)
         WaveFormView.addAmplitude(recorder.maxAmplitude.toFloat())
     }
+
 }

@@ -19,11 +19,12 @@ class ApiConfig {
                 .addInterceptor(loggingInterceptor)
                 .build()
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://api.github.com/")
+                .baseUrl("https://welfare-prediction-oxcqjwbebq-et.a.run.app/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
             return retrofit.create(ApiService::class.java)
         }
     }
+
 }
