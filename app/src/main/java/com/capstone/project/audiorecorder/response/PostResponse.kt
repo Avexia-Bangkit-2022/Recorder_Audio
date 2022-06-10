@@ -8,5 +8,4 @@ data class PostResponse(
 
     @field:SerializedName("prediction")
     val prediction: String
-    //val message: String
 )

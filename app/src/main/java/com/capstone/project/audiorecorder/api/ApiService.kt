@@ -24,9 +24,10 @@ interface ApiService {
         @Path("name") name: String
     ):Call<GetResponse>*/
 
+    @Headers("Content-Type: multipart/form-data", "Content-Type: application/json")
     @Multipart
     @POST("predict")
     fun uploadAudio(
-        @Part audio: MultipartBody.Part
+        @Part file: MultipartBody.Part
     ): Call<PostResponse>
 }
