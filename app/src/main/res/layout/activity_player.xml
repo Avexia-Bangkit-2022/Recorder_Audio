@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         app:layout_constraintTop_toTopOf="parent"
-        app:title=" ">
+        app:title=" "
+        tools:layout_editor_absoluteX="0dp">
 
         <TextView
             android:id="@+id/tvFileName"
@@ -96,28 +97,34 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar_Player"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolBar_Player" />
-
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tvDescResponse"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:textStyle="italic"
+        android:textSize="24sp"
+        android:textAlignment="center"
         android:text="Description"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolBar_Player" />
+
+    <TextView
+        android:id="@+id/tvAccuracy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:textStyle="italic"
+        android:textSize="24sp"
+        android:textAlignment="center"
+        android:text="Accuracy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescResponse" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

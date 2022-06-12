@@ -13,10 +13,10 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
-import com.capstone.project.audiorecorder.viewmodel.ViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.activity_player.*
+import kotlinx.android.synthetic.main.activity_player.view.*
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -25,7 +25,6 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var runnable: Runnable
     private lateinit var handler: Handler
-    private lateinit var viewModel: ViewModel
     private var delay = 1000L
     private var jumpValue = 1000
 
@@ -41,32 +40,19 @@ class PlayerActivity : AppCompatActivity() {
         var btnForward = findViewById<ImageButton>(R.id.btnForward)
         var btnBackward = findViewById<ImageButton>(R.id.btnBackward)
         var seekBar = findViewById<SeekBar>(R.id.seekBar)
-        //var tvDescPlayer = findViewById<TextView>(R.id.tvDescPlayer)
+        var tvDescResponse = findViewById<TextView>(R.id.tvDescResponse)
+        var tvDesAccuracy = findViewById<TextView>(R.id.tvAccuracy)
 
-        var filePath = intent.getStringExtra("filepath")
-        var fileName = intent.getStringExtra("filename")
-        //val predict = intent.getStringExtra("predict")
-        val file = fileName+filePath
-        Log.d("player", file.toString())
-
-        //tvDescPlayer.setText(predict)
-
-        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
-
-        /*if (fileName != null) { viewModel.setAudioPlayer(fileName) }
-        viewModel.getAudioPlayer().observe(this, {
-            showLoading(true)
-            if (it != null){
-                tvDescPlayer.text = it.message
-            }
-            showLoading(false)
-        })*/
+        val fileName = intent.getStringExtra("filename")
+        val message = intent.getStringExtra("message")
+        val accuracy = intent.getStringExtra("accuracy")
 
         mediaPlayer = MediaPlayer()
-        mediaPlayer.apply {
-            setDataSource(filePath)
+        /*mediaPlayer.apply {
+            setDataSource(getFile)
             prepare()
         }
+        Log.d("Player", getFile.toString())*/
 
         setSupportActionBar(materialToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -75,7 +61,9 @@ class PlayerActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        tvFileName.text = "$fileName.mp3"
+        tvDescResponse.text = "Condition : ${message}"
+        tvDesAccuracy.text = "Accuracy : ${accuracy}"
+        tvFileName.text = fileName
         tvTrackDuration.text = dateFormat(mediaPlayer.duration)
 
         handler = Handler(Looper.getMainLooper())
@@ -150,10 +138,5 @@ class PlayerActivity : AppCompatActivity() {
         if (h > 0)
             str = "$h:$str"
         return str
-    }
-
-    private fun showLoading(isLoading: Boolean) {
-        if (isLoading) { progressBar_Player.visibility = View.VISIBLE }
-        else{ progressBar_Player.visibility = View.GONE }
     }
 }
