@@ -82,10 +82,10 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/WaveFormView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_Timer"
+            app:layout_constraintTop_toTopOf="@+id/tv_Timer"
             android:visibility="gone"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -112,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:text="Fetch file"
+                android:text="Fetching"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -120,8 +120,10 @@
 
         <TextView
             android:id="@+id/textView_Name_Audio"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="Name : Audio"
             app:layout_constraintBottom_toTopOf="@+id/tv_Timer"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,22 +1,16 @@
 package com.capstone.project.audiorecorder
 
 import android.media.MediaPlayer
-import android.media.PlaybackParams
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.View
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.activity_player.*
-import kotlinx.android.synthetic.main.activity_player.view.*
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -62,7 +56,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         tvDescResponse.text = "Condition : ${message}"
-        tvDesAccuracy.text = "Accuracy : ${accuracy}"
+        tvDesAccuracy.text = "Confidence Level : ${accuracy}"
         tvFileName.text = fileName
         tvTrackDuration.text = dateFormat(mediaPlayer.duration)
 
