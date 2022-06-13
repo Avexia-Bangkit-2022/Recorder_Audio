@@ -50,9 +50,6 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
     @SuppressLint("SimpleDateFormat")
     private val timeStamp: String = SimpleDateFormat(FILENAME_FORMAT).format(Date())
 
-    private var permission = arrayOf(Manifest.permission.RECORD_AUDIO,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE)
     private var permissionGranted = false
     private var isRecording = false
     private var isPause = false

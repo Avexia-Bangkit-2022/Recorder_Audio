@@ -1,5 +1,6 @@
 package com.capstone.project.audiorecorder
 
+import android.content.Intent
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -26,16 +27,16 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
-        var tvFileName = findViewById<TextView>(R.id.tvFileName)
-        var tvTrackProgress = findViewById<TextView>(R.id.tvTrackProgress)
-        var tvTrackDuration = findViewById<TextView>(R.id.tvTrackDuration)
-        var materialToolbar = findViewById<MaterialToolbar>(R.id.toolBar_Player)
-        var btnPlay = findViewById<ImageButton>(R.id.btnPlay)
-        var btnForward = findViewById<ImageButton>(R.id.btnForward)
-        var btnBackward = findViewById<ImageButton>(R.id.btnBackward)
-        var seekBar = findViewById<SeekBar>(R.id.seekBar)
-        var tvDescResponse = findViewById<TextView>(R.id.tvDescResponse)
-        var tvDesAccuracy = findViewById<TextView>(R.id.tvAccuracy)
+        val tvFileName = findViewById<TextView>(R.id.tvFileName)
+        val tvTrackProgress = findViewById<TextView>(R.id.tvTrackProgress)
+        val tvTrackDuration = findViewById<TextView>(R.id.tvTrackDuration)
+        val materialToolbar = findViewById<MaterialToolbar>(R.id.toolBar_Player)
+        val btnPlay = findViewById<ImageButton>(R.id.btnPlay)
+        val btnForward = findViewById<ImageButton>(R.id.btnForward)
+        val btnBackward = findViewById<ImageButton>(R.id.btnBackward)
+        val seekBar = findViewById<SeekBar>(R.id.seekBar)
+        val tvDescResponse = findViewById<TextView>(R.id.tvDescResponse)
+        val tvDesAccuracy = findViewById<TextView>(R.id.tvAccuracy)
 
         val fileName = intent.getStringExtra("filename")
         val message = intent.getStringExtra("message")
@@ -115,9 +116,9 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        mediaPlayer.stop()
-        mediaPlayer.release()
         handler.removeCallbacks(runnable)
+        val intent = Intent(applicationContext,MainActivity::class.java)
+        startActivity(intent)
     }
 
     private fun dateFormat(duration: Int): String {
