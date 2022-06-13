@@ -122,8 +122,9 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         btn_Delete.isClickable = false
     }
 
+    @SuppressLint("NewApi")
     private fun createCustomTempFile(context: Context): File {
-        val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
         return File.createTempFile("Record_$timeStamp", ".mp3", storageDir)
     }
 
@@ -208,6 +209,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
             })
         }
         showLoading(true)
+        textView_Name_Audio.visibility = View.GONE
     }
 
     @SuppressLint("NewApi")
@@ -252,6 +254,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
             })
         }
         showLoading(true)
+        textView_Name_Audio.visibility = View.GONE
     }
 
     private fun dismiss() {
@@ -330,6 +333,9 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         btn_Delete.visibility = View.VISIBLE
 
         btn_Done.visibility = View.VISIBLE
+
+        textView_Name_Audio.visibility = View.VISIBLE
+        textView_Name_Audio.text = save
     }
 
     private fun stopRecording(){
