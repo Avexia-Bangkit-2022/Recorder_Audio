@@ -38,16 +38,16 @@ class PlayerActivity : AppCompatActivity() {
         val tvDescResponse = findViewById<TextView>(R.id.tvDescResponse)
         val tvDesAccuracy = findViewById<TextView>(R.id.tvAccuracy)
 
+        val filePath = intent.getStringExtra("filepath")
         val fileName = intent.getStringExtra("filename")
         val message = intent.getStringExtra("message")
         val accuracy = intent.getStringExtra("accuracy")
 
         mediaPlayer = MediaPlayer()
-        /*mediaPlayer.apply {
-            setDataSource(getFile)
+        mediaPlayer.apply {
+            setDataSource(filePath)
             prepare()
         }
-        Log.d("Player", getFile.toString())*/
 
         setSupportActionBar(materialToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

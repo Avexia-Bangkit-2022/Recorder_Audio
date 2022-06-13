@@ -16,6 +16,8 @@
         android:roundIcon="@drawable/avexia_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
+        android:largeHeap="true"
         android:theme="@style/Theme.AudioRecorder">
         <activity
             android:name=".PlayerActivity"

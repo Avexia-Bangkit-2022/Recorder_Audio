@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.net.toFile
 import com.capstone.project.audiorecorder.api.ApiConfig
 import com.capstone.project.audiorecorder.response.PostResponse
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -54,9 +55,9 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
     private var isRecording = false
     private var isPause = false
     private var duration = ""
-    private var files = MultipartBody.Part
     private var getFile: File? = null
     private var save = ""
+    private var selectedFile: Uri? = null
 
     private lateinit var recorder: MediaRecorder
     private lateinit var timer: Timer
@@ -76,6 +77,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
 
         pick_folder_button.setOnClickListener {
             startGallery()
+            button_Main_Fetch_file.visibility = View.VISIBLE
         }
 
         button_Main_Fetch_file.setOnClickListener {
@@ -100,12 +102,14 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         imageButton_Cancel.setOnClickListener {
             File("$save").delete()
             Toast.makeText(this, "Record delete", Toast.LENGTH_LONG).show()
+            textView_Name_Audio.visibility = View.GONE
             dismiss()
         }
 
         bottomSheetBG.setOnClickListener {
             File("$save").delete()
             Toast.makeText(this, "Record delete", Toast.LENGTH_LONG).show()
+            textView_Name_Audio.visibility = View.GONE
             dismiss()
         }
 
@@ -118,6 +122,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
             stopRecording()
             File("$save").delete()
             Toast.makeText(this, "Record delete", Toast.LENGTH_SHORT).show()
+            textView_Name_Audio.visibility = View.GONE
         }
         btn_Delete.isClickable = false
     }
@@ -163,11 +168,11 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
     private val launcherIntentGallery = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){ result ->
         if(result.resultCode == RESULT_OK){
-            val selectedAudio: Uri = result.data?.data as Uri
-            val myFile = uriToFile(selectedAudio, this@MainActivity)
+            selectedFile = (result.data?.data as Uri)
+            val myFile = selectedFile?.let { uriToFile(it, this@MainActivity) }
             getFile = myFile
             textView_Name_Audio.visibility = View.VISIBLE
-            textView_Name_Audio.text = getFile.toString()
+            textView_Name_Audio.text = selectedFile.toString()
         }
     }
 
@@ -186,15 +191,14 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
                     if (response.isSuccessful){
                         Toast.makeText(this@MainActivity, "Upload Succes : " + response.body()?.message, Toast.LENGTH_LONG).show()
                         val intent = Intent(this@MainActivity, PlayerActivity::class.java)
-                        intent.putExtra("filepath", getFile)
-                        intent.putExtra("filename", file.name)
+                        intent.putExtra("filepath", selectedFile.toString())
+                        intent.putExtra("filename", selectedFile.toString())
                         intent.putExtra("message", responseBody?.message)
                         intent.putExtra("accuracy", responseBody?.accuracy)
                         startActivity(intent)
                         finish()
                     } else {
-                        Toast.makeText(this@MainActivity, "Upload Succes : " + response.body()?.message.toString(),
-                            Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@MainActivity, "Upload Succes : Failed to predict", Toast.LENGTH_LONG).show()
                         Log.d("Main", responseBody?.error.toString())
                         progressBar_Main.visibility = View.GONE
                     }
@@ -210,6 +214,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         }
         showLoading(true)
         textView_Name_Audio.visibility = View.GONE
+        button_Main_Fetch_file.visibility = View.INVISIBLE
     }
 
     @SuppressLint("NewApi")
@@ -232,14 +237,13 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
                         Toast.makeText(this@MainActivity, "Upload Succes : " + response.body()?.message, Toast.LENGTH_LONG).show()
                         val intent = Intent(this@MainActivity, PlayerActivity::class.java)
                         intent.putExtra("filepath", save)
-                        intent.putExtra("filename", file.name)
+                        intent.putExtra("filename", save)
                         intent.putExtra("message", responseBody?.message)
                         intent.putExtra("accuracy", responseBody?.accuracy)
                         startActivity(intent)
                         finish()
                     } else {
-                        Toast.makeText(this@MainActivity, "Upload Succes : " + response.body()?.message.toString(),
-                            Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@MainActivity, "Upload Succes : Failed to predict", Toast.LENGTH_LONG).show()
                         Log.d("Main", responseBody?.error.toString())
                         progressBar_Main.visibility = View.GONE
                     }
